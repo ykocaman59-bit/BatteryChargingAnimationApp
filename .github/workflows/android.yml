@@ -20,24 +20,25 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    - name: Final Direct Build
+    - name: Direct APK Build Fix
       run: |
-        # settings.gradle dosyasını kök dizinde düzelt
-        find . -maxdepth 3 -name "settings.gradle" -exec bash -c '
-          echo "pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }" > "$1"
-          echo "dependencyResolutionManagement { repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS); repositories { google(); mavenCentral() } }" >> "$1"
-          echo "rootProject.name = \"ChargingShow\"" >> "$1"
-          echo "include \":app\"" >> "$1"
-        ' _ {} \;
-
-        # Kök dizinden çıkmadan doğrudan derle
-        BUILD_FILE=$(find . -name "build.gradle" -not -path "*/app/*" | head -n 1)
-        if [ -n "$BUILD_FILE" ]; then
-          DIR=$(dirname "$BUILD_FILE")
-          cd "$DIR"
+        # İç içe ne kadar klasör varsa atla, doğrudan app klasörünün bir üst dizinine geç
+        APP_DIR=$(find . -name "AndroidManifest.xml" -not -path "*/.*" -exec dirname {} \; | xargs dirname)
+        if [ -d "$APP_DIR" ]; then
+          cd "$APP_DIR"
         fi
 
-        gradle assembleDebug
+        # Eğer kökte build.gradle yoksa app klasörünün içindekini köke taşıyıp tek proje yapalım
+        if [ ! -f "build.gradle" ] && [ -f "app/build.gradle" ]; then
+          cp app/build.gradle .
+        fi
+
+        # Gradle wrapper scriptini sıfırdan ve hatasız üret
+        gradle wrapper --gradle-version 8.0
+        chmod +x gradlew
+        
+        # Derlemeyi başlat
+        ./gradlew assembleDebug
       env:
         TERM: dumb
 
