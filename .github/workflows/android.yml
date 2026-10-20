@@ -22,14 +22,22 @@ jobs:
 
     - name: Fix and Build APK
       run: |
-        # Doğru alt klasöre in (İç içe klasör karmaşasını önler)
-        cd $(find . -maxdepth 2 -name "app" -type d | head -n 1 | xargs dirname)
+        # İç içe klasör karmaşasını ortadan kaldırmak için gradle dosyalarının olduğu dizini bul ve oraya git
+        PROJECT_DIR=$(find . -name "build.gradle" -not -path "*/app/*" -exec dirname {} \; | head -n 1)
+        if [ -n "$PROJECT_DIR" ]; then
+          cd "$PROJECT_DIR"
+        fi
         
-        # settings.gradle içerisindeki uyumsuz satırı tamamen sil
-        sed -i '/FAIL_ON_PROJECT_SETTINGS/d' settings.gradle || true
+        # settings.gradle içerisindeki uyumsuz satırı temizle
+        if [ -f "settings.gradle" ]; then
+          sed -i '/FAIL_ON_PROJECT_SETTINGS/d' settings.gradle || true
+        fi
         
-        # Gradle sarmalayıcısını oluştur ve derle
-        gradle wrapper --gradle-version 8.0
+        # Eğer gradlew yoksa oluştur ve derle
+        if [ ! -f "gradlew" ]; then
+          gradle wrapper --gradle-version 8.0
+        fi
+        
         chmod +x gradlew
         ./gradlew assembleDebug
       env:
