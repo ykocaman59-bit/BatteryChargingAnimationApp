@@ -20,14 +20,19 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    - name: Fix Settings and Build APK
+    - name: Build Android App inside correct directory
       run: |
-        # settings.gradle içerisindeki uyumsuz satırı temizle
-        sed -i '/FAIL_ON_PROJECT_SETTINGS/d' settings.gradle || true
+        # İç içe klasör durumunu kontrol edip doğru dizine geçiş yapıyoruz
+        cd $(find . -maxdepth 2 -name "app" -type d | head -n 1 | xargs dirname)
         
-        # Gradle derlemesini başlat
-        gradle init --type basic --automation-language groovy --no-search-upward || true
-        ./gradlew assembleDebug || gradle assembleDebug
+        # Gradle sarmalayıcısına izin ver ve derle
+        chmod +x gradlew || true
+        if [ -f "gradlew" ]; then
+          ./gradlew assembleDebug
+        else
+          gradle wrapper
+          ./gradlew assembleDebug
+        fi
       env:
         TERM: dumb
 
@@ -35,5 +40,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        path: app/build/outputs/apk/debug/app-debug.apk
+        path: '**/build/outputs/apk/debug/app-debug.apk'
         
