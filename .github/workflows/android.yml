@@ -20,20 +20,22 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    - name: Build APK Direct
+    - name: Ultimate Fix and Build
       run: |
-        # Doğru proje klasörünü bul
+        # Hangi klasörde olursa olsun settings.gradle dosyasını bul ve içeriğini hatasız versiyonla değiştir
+        find . -name "settings.gradle" -exec bash -c '
+          echo "pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }" > "$1"
+          echo "dependencyResolutionManagement { repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS); repositories { google(); mavenCentral() } }" >> "$1"
+          echo "rootProject.name = \"ChargingShow\"" >> "$1"
+          echo "include \":app\"" >> "$1"
+        ' _ {} \;
+
+        # Doğru klasöre gir ve gradle ile derle
         TARGET_DIR=$(find . -name "build.gradle" -not -path "*/.*" -exec dirname {} \; | head -n 1)
         if [ -n "$TARGET_DIR" ]; then
           cd "$TARGET_DIR"
         fi
-        
-        # Uyumsuz ayar satırını temizle
-        if [ -f "settings.gradle" ]; then
-          sed -i '/FAIL_ON_PROJECT_SETTINGS/d' settings.gradle || true
-        fi
-        
-        # Gradle ile doğrudan derle (gradlew kullanmadan)
+
         gradle assembleDebug
       env:
         TERM: dumb
