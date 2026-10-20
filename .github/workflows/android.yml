@@ -21,7 +21,7 @@ jobs:
         cache: gradle
 
     - name: Final Direct Build
-      run: `
+      run: |
         # settings.gradle dosyasını kök dizinde düzelt
         find . -maxdepth 3 -name "settings.gradle" -exec bash -c '
           echo "pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }" > "$1"
