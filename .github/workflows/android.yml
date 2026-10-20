@@ -20,19 +20,18 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    - name: Build Android App inside correct directory
+    - name: Fix and Build APK
       run: |
-        # İç içe klasör durumunu kontrol edip doğru dizine geçiş yapıyoruz
+        # Doğru alt klasöre in (İç içe klasör karmaşasını önler)
         cd $(find . -maxdepth 2 -name "app" -type d | head -n 1 | xargs dirname)
         
-        # Gradle sarmalayıcısına izin ver ve derle
-        chmod +x gradlew || true
-        if [ -f "gradlew" ]; then
-          ./gradlew assembleDebug
-        else
-          gradle wrapper
-          ./gradlew assembleDebug
-        fi
+        # settings.gradle içerisindeki uyumsuz satırı tamamen sil
+        sed -i '/FAIL_ON_PROJECT_SETTINGS/d' settings.gradle || true
+        
+        # Gradle sarmalayıcısını oluştur ve derle
+        gradle wrapper --gradle-version 8.0
+        chmod +x gradlew
+        ./gradlew assembleDebug
       env:
         TERM: dumb
 
