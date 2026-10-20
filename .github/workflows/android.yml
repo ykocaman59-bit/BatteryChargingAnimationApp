@@ -20,26 +20,21 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    - name: Fix and Build APK
+    - name: Build APK Direct
       run: |
-        # İç içe klasör karmaşasını ortadan kaldırmak için gradle dosyalarının olduğu dizini bul ve oraya git
-        PROJECT_DIR=$(find . -name "build.gradle" -not -path "*/app/*" -exec dirname {} \; | head -n 1)
-        if [ -n "$PROJECT_DIR" ]; then
-          cd "$PROJECT_DIR"
+        # Doğru proje klasörünü bul
+        TARGET_DIR=$(find . -name "build.gradle" -not -path "*/.*" -exec dirname {} \; | head -n 1)
+        if [ -n "$TARGET_DIR" ]; then
+          cd "$TARGET_DIR"
         fi
         
-        # settings.gradle içerisindeki uyumsuz satırı temizle
+        # Uyumsuz ayar satırını temizle
         if [ -f "settings.gradle" ]; then
           sed -i '/FAIL_ON_PROJECT_SETTINGS/d' settings.gradle || true
         fi
         
-        # Eğer gradlew yoksa oluştur ve derle
-        if [ ! -f "gradlew" ]; then
-          gradle wrapper --gradle-version 8.0
-        fi
-        
-        chmod +x gradlew
-        ./gradlew assembleDebug
+        # Gradle ile doğrudan derle (gradlew kullanmadan)
+        gradle assembleDebug
       env:
         TERM: dumb
 
