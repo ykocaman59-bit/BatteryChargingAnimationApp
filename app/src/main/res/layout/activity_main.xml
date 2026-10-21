@@ -3,52 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="24dp"
     android:gravity="center">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Şarj Animasyon &amp; Ses Ayarları"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="32dp"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Şarja Takılınca Okunacak Metin:"/>
-
-    <EditText
-        android:id="@+id/etConnectedText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Örn: Şarj kablosu bağlandı master!"
-        android:layout_marginBottom="16dp"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Şarjdan Çıkarılınca Okunacak Metin:"/>
-
-    <EditText
-        android:id="@+id/etDisconnectedText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Örn: Şarjdan çıkarıldım!"
-        android:layout_marginBottom="24dp"/>
-
-    <Button
-        android:id="@+id/btnTestTts"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Sesi Test Et"
-        android:layout_marginBottom="12dp"/>
-
-    <Button
-        android:id="@+id/btnSave"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Kaydet ve Servisi Başlat"/>
-
+        android:text="Battery Charging Animation App"
+        android:textSize="20sp" />
 </LinearLayout>
