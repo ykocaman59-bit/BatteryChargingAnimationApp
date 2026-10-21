@@ -20,24 +20,25 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    - name: Direct APK Build Fix
+    - name: Bulletproof Build Fix
       run: |
-        # İç içe ne kadar klasör varsa atla, doğrudan app klasörünün bir üst dizinine geç
-        APP_DIR=$(find . -name "AndroidManifest.xml" -not -path "*/.*" -exec dirname {} \; | xargs dirname)
-        if [ -d "$APP_DIR" ]; then
-          cd "$APP_DIR"
+        # Hangi klasörde olursa olsun eski ve bozuk settings.gradle dosyasını bul ve çöpe at
+        find . -name "settings.gradle" -delete
+
+        # Doğru yere tertemiz ve hatasız yeni settings.gradle oluştur
+        TARGET_DIR=$(find . -name "build.gradle" -not -path "*/.*" -exec dirname {} \; | head -n 1)
+        if [ -n "$TARGET_DIR" ]; then
+          cd "$TARGET_DIR"
         fi
 
-        # Eğer kökte build.gradle yoksa app klasörünün içindekini köke taşıyıp tek proje yapalım
-        if [ ! -f "build.gradle" ] && [ -f "app/build.gradle" ]; then
-          cp app/build.gradle .
-        fi
+        echo "pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }" > settings.gradle
+        echo "dependencyResolutionManagement { repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS); repositories { google(); mavenCentral() } }" >> settings.gradle
+        echo "rootProject.name = \"ChargingShow\"" >> settings.gradle
+        echo "include \":app\"" >> settings.gradle
 
-        # Gradle wrapper scriptini sıfırdan ve hatasız üret
+        # Wrapper kur ve derle
         gradle wrapper --gradle-version 8.0
         chmod +x gradlew
-        
-        # Derlemeyi başlat
         ./gradlew assembleDebug
       env:
         TERM: dumb
