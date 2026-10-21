@@ -1,16 +1,14 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res.android"
-    package="com.example.chargingshow">
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res.android">
 
-    <!-- Gerekli İzinler -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="Charging Show"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
@@ -29,8 +27,7 @@
         <service
             android:name=".ChargingService"
             android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="specialUse" />
+            android:exported="false" />
 
         <receiver
             android:name=".ChargingReceiver"
