@@ -3,8 +3,6 @@ name: Build Android APK
 on:
   push:
     branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
 
 jobs:
   build:
@@ -21,13 +19,15 @@ jobs:
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+      working-directory: ./BatteryChargingAnimationApp-main # Dosyalarının olduğu alt klasör adı
 
     - name: Build with Gradle (Debug APK)
-      run: ./gradlew assembleDebug --stacktrace
+      run: ./gradlew assembleDebug
+      working-directory: ./BatteryChargingAnimationApp-main
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        path: app/build/outputs/apk/debug/app-debug.apk
+        path: BatteryChargingAnimationApp-main/app/build/outputs/apk/debug/app-debug.apk
         
