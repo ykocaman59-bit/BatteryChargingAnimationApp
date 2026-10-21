@@ -20,23 +20,28 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    - name: Bulletproof Build Fix
+    - name: Ultimate Fix and Build
       run: |
-        # Hangi klasörde olursa olsun eski ve bozuk settings.gradle dosyasını bul ve çöpe at
-        find . -name "settings.gradle" -delete
-
-        # Doğru yere tertemiz ve hatasız yeni settings.gradle oluştur
-        TARGET_DIR=$(find . -name "build.gradle" -not -path "*/.*" -exec dirname {} \; | head -n 1)
-        if [ -n "$TARGET_DIR" ]; then
-          cd "$TARGET_DIR"
+        # Gerçek app klasörünün olduğu konumu tespit et ve kök dizini oraya sabitle
+        APP_PATH=$(find . -name "AndroidManifest.xml" -not -path "*/.*" -exec dirname {} \;)
+        if [ -n "$APP_PATH" ]; then
+          ROOT_LEV=$(dirname "$APP_PATH")
+          cd "$ROOT_LEV"
         fi
 
+        # Eski ve bozuk gradle yapılandırma dosyalarını temizle
+        rm -f settings.gradle build.gradle
+
+        # app klasörünün bir üst dizininde eksiksiz ve hatasız kök build.gradle oluştur
+        echo "plugins { id 'com.android.application' version '8.1.1' apply false; id 'org.jetbrains.kotlin.android' version '1.9.0' apply false }" > build.gradle
+
+        # Eksiksiz ve hatasız settings.gradle oluştur
         echo "pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }" > settings.gradle
         echo "dependencyResolutionManagement { repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS); repositories { google(); mavenCentral() } }" >> settings.gradle
         echo "rootProject.name = \"ChargingShow\"" >> settings.gradle
         echo "include \":app\"" >> settings.gradle
 
-        # Wrapper kur ve derle
+        # Wrapper kur ve derlemeyi başlat
         gradle wrapper --gradle-version 8.0
         chmod +x gradlew
         ./gradlew assembleDebug
