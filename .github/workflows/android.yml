@@ -19,9 +19,13 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Generate Wrapper and Build APK
+    - name: Setup Wrapper and Build
       run: |
-        gradle wrapper --gradle-version 8.5
+        mkdir -p gradle/wrapper
+        # Gradle 8.2 için jar dosyasını ve wrapper'ı otomatik kuruyoruz
+        wget -q https://raw.githubusercontent.com/gradle/gradle/v8.2.0/gradle/wrapper/gradle-wrapper.jar -O gradle/wrapper/gradle-wrapper.jar || \
+        curl -sL https://raw.githubusercontent.com/gradle/gradle/v8.2.0/gradle/wrapper/gradle-wrapper.jar -o gradle/wrapper/gradle-wrapper.jar
+        
         chmod +x gradlew
         ./gradlew assembleDebug --stacktrace
 
