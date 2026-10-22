@@ -19,7 +19,13 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Build Direct with Stacktrace
+    - name: Install Compatible Gradle 8.2
+      run: |
+        wget -q https://services.gradle.org/distributions/gradle-8.2-bin.zip
+        unzip -q gradle-8.2-bin.zip
+        echo "$PWD/gradle-8.2/bin" >> $GITHUB_PATH
+
+    - name: Build APK
       run: gradle assembleDebug --stacktrace
 
     - name: Upload APK
