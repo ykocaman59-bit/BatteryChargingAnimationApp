@@ -31,8 +31,8 @@ jobs:
         unzip -q gradle-8.5-bin.zip
         echo "$PWD/gradle-8.5/bin" >> $GITHUB_PATH
 
-    - name: Build APK Clear Log
-      run: gradle assembleDebug --console=plain --stacktrace
+    - name: Build APK Full Log
+      run: gradle assembleDebug --info --stacktrace
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
