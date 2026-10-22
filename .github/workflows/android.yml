@@ -19,14 +19,8 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Build Direct without Wrapper
-      run: |
-        # Gradle wrapper dosyalarına bakmadan doğrudan sistemi derlemeye zorluyoruz
-        export GRADLE_USER_HOME=$HOME/.gradle
-        mvn --version || true
-        
-        # Doğrudan sistem gradle komutu ile build alıyoruz
-        gradle assembleDebug
+    - name: Build Direct with Stacktrace
+      run: gradle assembleDebug --stacktrace
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
