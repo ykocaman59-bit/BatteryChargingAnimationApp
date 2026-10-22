@@ -19,14 +19,17 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Download and Install Gradle 8.5 Manually
-      run: |
-        wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
-        unzip -q gradle-8.5-bin.zip
-        echo "$PWD/gradle-8.5/bin" >> $GITHUB_PATH
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
 
-    - name: Build APK with Full Stacktrace
-      run: gradle assembleDebug --stacktrace --info
+    - name: Fix Source Folder Capitalization
+      run: |
+        if [ -d "app/src/main/Java" ]; then
+          mv app/src/main/Java app/src/main/java
+        fi
+
+    - name: Build APK
+      run: gradle assembleDebug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
