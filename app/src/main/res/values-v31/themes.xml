@@ -1,1 +1,9 @@
-
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 12+ sistem açılış ekranı: aynı logo + aynı renk, sonra bizim animasyon devralır -->
+    <style name="Theme.ChargingShow.Splash" parent="Theme.ChargingShow">
+        <item name="android:windowBackground">@drawable/bg_gradient</item>
+        <item name="android:windowSplashScreenBackground">@color/bg_dark</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+    </style>
+</resources>
