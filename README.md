@@ -1,19 +1,18 @@
-# ⚡ Şarj Show
+# ⚡ Şarj Show + 🏛️ Osmanlı Launcher
 
-Telefon şarja takılınca **animasyon** gösteren ve **sesli (TTS) bildirim** yapan Android uygulaması.
+Tek uygulamada iki özellik:
 
-## Özellikler
-- 🎬 **Açılış animasyonu:** Logo (şarj halkası + yıldırım) ~2 sn animasyonla gelir, sonra uygulama açılır.
-- ⚡ **Şarj animasyonu:** Şarj takılınca ekranda canlı pil yüzdesiyle animasyon çıkar (kilit ekranında da).
-- 🗣️ **Sesli okuma:** Şarj takılınca / çıkarılınca istediğin cümleyi Türkçe söyler.
-- 🔄 **Arka plan servisi:** Açık bırakılırsa telefon yeniden başlayınca da çalışır.
+**Osmanlı Launcher** – Osmanlı temalı (lacivert + altın) ana ekran: Osmanlı/Hicri takvim kartı, uygulama arama, 4'lü uygulama ızgarası, alt dock.
+
+**Şarj Show** – Şarja takılınca animasyon + sesli bildirim (Türkçe TTS), logo açılış animasyonu.
 
 ## Kullanım
-1. Uygulamayı aç, **"Şarj animasyonu ve sesli bildirim"** anahtarını aç.
-2. **"Üstte gösterme iznini aç"** butonuna basıp izni ver (animasyonun arka plandan açılması için gerekli).
-3. İstersen söylenecek cümleleri değiştirip **Kaydet**'e bas.
+1. Uygulamayı aç: logo animasyonu → Osmanlı ana ekranı.
+2. Dock'taki ⚙ (Şarj Show) simgesinden ayarlara gir; servisi aç, "üstte gösterme" iznini ver.
+3. Ayarlardaki **"Osmanlı Launcher'ı ana ekran yap"** butonuyla varsayılan ana ekran seç.
+   (Geri dönmek için: Telefon Ayarları ▸ Uygulamalar ▸ Varsayılan uygulamalar ▸ Ana ekran uygulaması)
 
 ## APK alma
-- **GitHub:** Projeyi bir repoya push et → *Actions* sekmesi → "Build Android APK" → en alttaki **Artifacts** → `sarj-show-debug-apk`.
-- **Android Studio:** Projeyi aç → *Build ▸ Build Bundle(s) / APK(s) ▸ Build APK(s)*.
-- **Komut satırı:** `gradle assembleDebug` (Gradle 8.5, JDK 17) → `app/build/outputs/apk/debug/app-debug.apk`
+- **GitHub:** push → Actions ▸ "Build Android APK" ▸ Artifacts ▸ `sarj-show-debug-apk`
+- **Android Studio:** Build ▸ Build APK(s)
+- **Komut satırı:** `gradle assembleDebug` (Gradle 8.5, JDK 17)
