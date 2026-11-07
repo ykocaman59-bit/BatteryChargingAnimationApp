@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- halka zemini -->
+    <path
+        android:pathData="M54,30 A24,24 0 1 1 54,78 A24,24 0 1 1 54,30 Z"
+        android:strokeColor="#33FFFFFF"
+        android:strokeWidth="5"
+        android:fillColor="#00000000" />
+    <!-- dolu kısım (%75) -->
+    <path
+        android:pathData="M54,30 A24,24 0 1 1 30,54"
+        android:strokeColor="#00E5A0"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+    <!-- yıldırım -->
+    <path
+        android:pathData="M56.8,37.2 L47,55.4 L53.3,55.4 L49.8,70.8 L61.7,50.5 L55.4,50.5 Z"
+        android:fillColor="#FFD60A"
+        android:strokeColor="#FFD60A"
+        android:strokeWidth="1.5"
+        android:strokeLineJoin="round" />
+</vector>
