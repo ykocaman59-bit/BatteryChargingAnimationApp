@@ -15,7 +15,7 @@ class SplashActivity : AppCompatActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
     private val openMain = Runnable {
-        startActivity(Intent(this, MainActivity::class.java))
+        startActivity(Intent(this, LauncherActivity::class.java))
         @Suppress("DEPRECATION")
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         finish()

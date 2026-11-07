@@ -107,7 +107,7 @@ class ChargingService : Service() {
     private fun buildNotification(): Notification {
         val pendingIntent = PendingIntent.getActivity(
             this, 0,
-            Intent(this, SplashActivity::class.java),
+            Intent(this, SettingsActivity::class.java),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
         return NotificationCompat.Builder(this, CHANNEL_ID)
