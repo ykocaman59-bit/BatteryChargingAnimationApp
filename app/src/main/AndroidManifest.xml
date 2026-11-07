@@ -8,6 +8,14 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <!-- Android 11+ : yüklü uygulamaları listeleyebilmek için -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -27,8 +35,24 @@
             </intent-filter>
         </activity>
 
+        <!-- Osmanlı Launcher: telefonun ana ekranı olabilir (HOME) -->
         <activity
-            android:name=".MainActivity"
+            android:name=".LauncherActivity"
+            android:exported="true"
+            android:label="@string/launcher_label"
+            android:launchMode="singleTask"
+            android:stateNotNeeded="true"
+            android:theme="@style/Theme.ChargingShow">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- Şarj Show ayarları -->
+        <activity
+            android:name=".SettingsActivity"
             android:exported="false" />
 
         <!-- Şarj takılınca çıkan animasyon ekranı -->
