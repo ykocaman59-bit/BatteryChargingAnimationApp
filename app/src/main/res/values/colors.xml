@@ -1,1 +1,9 @@
-
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg_dark">#070B1E</color>
+    <color name="bg_dark_light">#1A2150</color>
+    <color name="neon_green">#00E5A0</color>
+    <color name="bolt_yellow">#FFD60A</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B3FFFFFF</color>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Şarj Show</string>
+    <string name="tagline">Şarj et, şovu izle</string>
+    <string name="service_switch">Şarj animasyonu ve sesli bildirim</string>
+    <string name="plug_text_hint">Şarja takılınca söylenecek cümle</string>
+    <string name="unplug_text_hint">Şarjdan çıkarılınca söylenecek cümle</string>
+    <string name="save">Kaydet</string>
+    <string name="saved">Kaydedildi</string>
+    <string name="overlay_permission">Üstte gösterme iznini aç</string>
+    <string name="overlay_on">Üstte gösterme izni açık ✓</string>
+    <string name="overlay_off">Animasyonun ekranda açılması için \"diğer uygulamaların üstünde göster\" izni gerekli</string>
+    <string name="charging">Şarj oluyor</string>
+    <string name="not_charging">Şarjda değil</string>
+    <string name="notif_channel">Şarj servisi</string>
+    <string name="notif_running">Şarj takibi çalışıyor</string>
+</resources>
