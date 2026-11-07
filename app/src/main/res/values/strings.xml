@@ -14,4 +14,6 @@
     <string name="not_charging">Şarjda değil</string>
     <string name="notif_channel">Şarj servisi</string>
     <string name="notif_running">Şarj takibi çalışıyor</string>
+    <string name="launcher_label">Osmanlı Launcher</string>
+    <string name="set_default_home">Osmanlı Launcher\'ı ana ekran yap</string>
 </resources>
