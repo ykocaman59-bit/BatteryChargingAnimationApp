@@ -29,6 +29,9 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var switchService: SwitchCompat
     private lateinit var etPlug: EditText
     private lateinit var etUnplug: EditText
+    private lateinit var switchLow: SwitchCompat
+    private lateinit var etLowLevel: EditText
+    private lateinit var etLowText: EditText
 
     private val prefs by lazy { getSharedPreferences(Prefs.NAME, MODE_PRIVATE) }
 
@@ -55,6 +58,13 @@ class SettingsActivity : AppCompatActivity() {
         switchService = findViewById(R.id.switchService)
         etPlug = findViewById(R.id.etPlug)
         etUnplug = findViewById(R.id.etUnplug)
+        switchLow = findViewById(R.id.switchLow)
+        etLowLevel = findViewById(R.id.etLowLevel)
+        etLowText = findViewById(R.id.etLowText)
+
+        switchLow.isChecked = prefs.getBoolean(Prefs.LOW_ENABLED, true)
+        etLowLevel.setText(prefs.getInt(Prefs.LOW_LEVEL, Prefs.DEFAULT_LOW_LEVEL).toString())
+        etLowText.setText(prefs.getString(Prefs.LOW_TEXT, Prefs.DEFAULT_LOW_TEXT))
 
         etPlug.setText(prefs.getString(Prefs.TEXT_PLUG, Prefs.DEFAULT_PLUG))
         etUnplug.setText(prefs.getString(Prefs.TEXT_UNPLUG, Prefs.DEFAULT_UNPLUG))
@@ -69,9 +79,15 @@ class SettingsActivity : AppCompatActivity() {
         if (enabled) startChargingService()
 
         findViewById<Button>(R.id.btnSave).setOnClickListener {
+            val lowLevel = etLowLevel.text.toString().toIntOrNull()?.coerceIn(1, 99)
+                ?: Prefs.DEFAULT_LOW_LEVEL
+            etLowLevel.setText(lowLevel.toString())
             prefs.edit()
                 .putString(Prefs.TEXT_PLUG, etPlug.text.toString().trim())
                 .putString(Prefs.TEXT_UNPLUG, etUnplug.text.toString().trim())
+                .putBoolean(Prefs.LOW_ENABLED, switchLow.isChecked)
+                .putInt(Prefs.LOW_LEVEL, lowLevel)
+                .putString(Prefs.LOW_TEXT, etLowText.text.toString().trim())
                 .apply()
             Toast.makeText(this, R.string.saved, Toast.LENGTH_SHORT).show()
         }
