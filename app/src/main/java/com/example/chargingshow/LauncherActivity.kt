@@ -3,7 +3,9 @@ package com.example.chargingshow
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import android.graphics.Color
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -41,7 +43,12 @@ class LauncherActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        // Arka plan her zaman koyu olduğu için durum çubuğu simgeleri (saat, şarj %, sinyal, wifi)
+        // telefonun açık/koyu temasından bağımsız olarak HER ZAMAN açık (beyaz) renkte çizilsin.
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+        )
 
         coverRef.value = prefs.getString(Prefs.COVER, null)
             ?: Covers.listAssets(this).firstOrNull()
