@@ -6,12 +6,14 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.provider.Settings
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -185,6 +187,7 @@ class DragState {
 
 // ------------------------------------------------------------------ ana kök
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LauncherRoot(
     refreshKey: Int,
