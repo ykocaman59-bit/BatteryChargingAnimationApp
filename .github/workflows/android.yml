@@ -26,7 +26,25 @@ jobs:
           gradle-version: '8.5'
 
       - name: Debug APK derle
-        run: gradle assembleDebug --stacktrace
+        shell: bash
+        run: gradle assembleDebug --stacktrace --console=plain 2>&1 | tee build.log
+
+      # Derleme patlarsa asıl hata satırlarını sayfanın üstündeki "Annotations" kısmında göster
+      - name: Hata özeti
+        if: failure()
+        shell: bash
+        run: |
+          grep -E "^e: |What went wrong|error: |AAPT|Execution failed|Could not resolve|Unresolved|Manifest merger" -A4 build.log | head -c 3500 > ozet.txt || true
+          MSG=$(sed ':a;N;$!ba;s/\n/%0A/g' ozet.txt)
+          echo "::error title=DERLEME HATASI::${MSG}"
+
+      - name: Log dosyasını yükle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
+          if-no-files-found: ignore
 
       - name: APK yükle
         uses: actions/upload-artifact@v4
