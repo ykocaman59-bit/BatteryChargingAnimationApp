@@ -16,4 +16,8 @@
     <string name="notif_running">Şarj takibi çalışıyor</string>
     <string name="launcher_label">Osmanlı Launcher</string>
     <string name="set_default_home">Osmanlı Launcher\'ı ana ekran yap</string>
+    <string name="low_channel">Düşük şarj uyarısı</string>
+    <string name="low_switch">Düşük şarj uyarısı</string>
+    <string name="low_level_hint">Uyarı yüzdesi (örn. 19)</string>
+    <string name="low_text_hint">Uyarı cümlesi (örn. Şarj bitiyor, şarja tak)</string>
 </resources>
