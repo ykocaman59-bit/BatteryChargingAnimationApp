@@ -1,18 +1,19 @@
 # ⚡ Şarj Show + 🏛️ Osmanlı Launcher
 
-Tek uygulamada iki özellik:
+## Osmanlı Launcher
+- **Ana sayfa:** kapak resmi, saat/tarih, Osmanlı (Hicri) takvim kartı. Sola kaydırınca **Uygulamalar** sayfası.
+- **Kapak resmi:** sağ üstteki 🖼 simgesi. 120 hazır Osmanlı temalı tasarım + kendi galerinden seçme.
+  `app/src/main/assets/wallpapers/` klasörüne eklediğin her resim otomatik listeye girer.
+- **Kilit ekranı:** seçilen kapak istenirse kilit ekranı duvar kağıdı olarak da ayarlanır.
+- **Basılı tut:** menü (Uygulama bilgisi / Kaldır). Basılı tutup **sürükle** → yer değiştirir.
+  Bir uygulamayı başka uygulamanın üstüne bırak → **klasör** oluşur, adı sorulur.
+- Arama kutusu; geri / ana ekran / kare tuşuna basınca yazı otomatik silinir.
 
-**Osmanlı Launcher** – Osmanlı temalı (lacivert + altın) ana ekran: Osmanlı/Hicri takvim kartı, uygulama arama, 4'lü uygulama ızgarası, alt dock.
-
-**Şarj Show** – Şarja takılınca animasyon + sesli bildirim (Türkçe TTS), logo açılış animasyonu.
-
-## Kullanım
-1. Uygulamayı aç: logo animasyonu → Osmanlı ana ekranı.
-2. Dock'taki ⚙ (Şarj Show) simgesinden ayarlara gir; servisi aç, "üstte gösterme" iznini ver.
-3. Ayarlardaki **"Osmanlı Launcher'ı ana ekran yap"** butonuyla varsayılan ana ekran seç.
-   (Geri dönmek için: Telefon Ayarları ▸ Uygulamalar ▸ Varsayılan uygulamalar ▸ Ana ekran uygulaması)
+## Şarj Show
+- Şarja takılınca animasyon + sesli bildirim, açılışta logo animasyonu.
+- **Düşük şarj uyarısı:** varsayılan %19, ayarlardan yüzde ve cümle değiştirilebilir.
 
 ## APK alma
-- **GitHub:** push → Actions ▸ "Build Android APK" ▸ Artifacts ▸ `sarj-show-debug-apk`
-- **Android Studio:** Build ▸ Build APK(s)
-- **Komut satırı:** `gradle assembleDebug` (Gradle 8.5, JDK 17)
+- GitHub: push → Actions ▸ "Build Android APK" ▸ Artifacts
+- Android Studio: Build ▸ Build APK(s)
+- Komut satırı: `gradle assembleDebug` (Gradle 8.5, JDK 17)
