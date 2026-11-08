@@ -27,7 +27,7 @@ object Covers {
             .map { "asset:$DIR/$it" }
     }
 
-    private fun open(context: Context, ref: String): InputStream? = when {
+    private fun openRef(context: Context, ref: String): InputStream? = when {
         ref.startsWith("asset:") -> context.assets.open(ref.removePrefix("asset:"))
         ref.startsWith("file:") -> {
             val f = File(context.filesDir, ref.removePrefix("file:"))
@@ -49,11 +49,11 @@ object Covers {
         if (ref.isEmpty()) return null
         return try {
             val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-            open(context, ref)?.use { BitmapFactory.decodeStream(it, null, bounds) }
+            openRef(context, ref)?.use { BitmapFactory.decodeStream(it, null, bounds) }
             val opts = BitmapFactory.Options().apply {
                 inSampleSize = sampleSize(bounds.outWidth, bounds.outHeight, reqW, reqH)
             }
-            open(context, ref)?.use { BitmapFactory.decodeStream(it, null, opts) }
+            openRef(context, ref)?.use { BitmapFactory.decodeStream(it, null, opts) }
         } catch (e: Exception) {
             null
         }
