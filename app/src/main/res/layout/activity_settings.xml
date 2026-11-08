@@ -83,6 +83,39 @@
                 android:textColor="@color/text_primary"
                 android:textColorHint="#80FFFFFF" />
 
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchLow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/low_switch"
+                android:textColor="@color/text_primary" />
+
+            <EditText
+                android:id="@+id/etLowLevel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_input"
+                android:hint="@string/low_level_hint"
+                android:inputType="number"
+                android:maxLength="2"
+                android:padding="12dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="#80FFFFFF" />
+
+            <EditText
+                android:id="@+id/etLowText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_input"
+                android:hint="@string/low_text_hint"
+                android:inputType="text"
+                android:padding="12dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="#80FFFFFF" />
+
             <Button
                 android:id="@+id/btnSave"
                 android:layout_width="match_parent"
