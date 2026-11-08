@@ -29,14 +29,14 @@ jobs:
         shell: bash
         run: gradle assembleDebug --stacktrace --console=plain 2>&1 | tee build.log
 
-      # Derleme patlarsa asıl hata satırlarını sayfanın üstündeki "Annotations" kısmında göster
+      # Derleme patlarsa her hatayı KISA tek satır olarak "Annotations" kısmında göster
       - name: Hata özeti
         if: failure()
         shell: bash
         run: |
-          grep -E "^e: |What went wrong|error: |AAPT|Execution failed|Could not resolve|Unresolved|Manifest merger" -A4 build.log | head -c 3500 > ozet.txt || true
-          MSG=$(sed ':a;N;$!ba;s/\n/%0A/g' ozet.txt)
-          echo "::error title=DERLEME HATASI::${MSG}"
+          grep -E "^e: " build.log | sed -E 's#^e: file://.*/([^/]+\.kt):#\1:#' | sort -u | head -15 > kt.txt || true
+          while IFS= read -r line; do echo "::error::${line}"; done < kt.txt
+          grep -E "What went wrong|Execution failed|AAPT|Manifest merger|Could not resolve" -A2 build.log | head -12 | while IFS= read -r l; do echo "::error::${l}"; done || true
 
       - name: Log dosyasını yükle
         if: always()
