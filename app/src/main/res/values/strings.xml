@@ -20,4 +20,6 @@
     <string name="low_switch">Düşük şarj uyarısı</string>
     <string name="low_level_hint">Uyarı yüzdesi (örn. 19)</string>
     <string name="low_text_hint">Uyarı cümlesi (örn. Şarj bitiyor, şarja tak)</string>
+    <string name="guard_service_label">Osmanlı Koruma</string>
+    <string name="guard_service_desc">Kilitli uygulamaları ve Osmanlı Launcher uygulamasının kaldırılmasını PIN, desen veya parmak izi ile korur. Ekrandaki yazıları yalnızca bu amaçla okur, hiçbir veriyi paylaşmaz.</string>
 </resources>
