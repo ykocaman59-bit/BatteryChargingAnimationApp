@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
 import android.provider.Settings
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -58,6 +59,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -108,7 +110,8 @@ private val Navy = Color(0xFF0F2A3F)
 data class AppItem(
     val label: String,
     val packageName: String,
-    val icon: ImageBitmap?
+    val icon: ImageBitmap?,
+    val locked: Boolean = false
 )
 
 @Composable
@@ -127,6 +130,7 @@ fun OsmanliLauncherTheme(content: @Composable () -> Unit) {
 
 private fun loadApps(context: Context): List<AppItem> {
     val pm = context.packageManager
+    val lockedSet = LockStore.lockedApps(context)
     val intent = Intent(Intent.ACTION_MAIN, null).addCategory(Intent.CATEGORY_LAUNCHER)
     return pm.queryIntentActivities(intent, 0)
         .filter { it.activityInfo.packageName != context.packageName }
@@ -134,7 +138,8 @@ private fun loadApps(context: Context): List<AppItem> {
             AppItem(
                 label = ri.loadLabel(pm).toString(),
                 packageName = ri.activityInfo.packageName,
-                icon = runCatching { ri.loadIcon(pm).toBitmap(108, 108).asImageBitmap() }.getOrNull()
+                icon = runCatching { ri.loadIcon(pm).toBitmap(108, 108).asImageBitmap() }.getOrNull(),
+                locked = lockedSet.contains(ri.activityInfo.packageName)
             )
         }
         .distinctBy { it.packageName }
@@ -150,6 +155,10 @@ private fun safeStart(context: Context, intent: Intent) {
 }
 
 private fun launchApp(context: Context, pkg: String) {
+    if (LockStore.isAppLocked(context, pkg) && !LockGuard.isUnlocked(pkg)) {
+        safeStart(context, AuthActivity.forApp(context, pkg))
+        return
+    }
     val intent = context.packageManager.getLaunchIntentForPackage(pkg)
     if (intent != null) safeStart(context, intent)
 }
@@ -214,13 +223,20 @@ fun LauncherRoot(
     var renameFolderId by remember { mutableStateOf<String?>(null) }
     var showCovers by remember { mutableStateOf(false) }
 
+    // ---- kilit (PIN / desen / parmak izi)
+    var lockVersion by remember { mutableIntStateOf(0) }
+    var lockChoicePkg by remember { mutableStateOf<String?>(null) }
+    var setupReq by remember { mutableStateOf<SetupRequest?>(null) }
+    var lockGate by remember { mutableStateOf(false) }
+    var showLockSettings by remember { mutableStateOf(false) }
+
     val drag = remember { DragState() }
     val pagerState = rememberPagerState(pageCount = { 2 })
 
     val appMap = remember(apps) { apps.associateBy { it.packageName } }
 
     // uygulama listesi
-    LaunchedEffect(refreshKey) {
+    LaunchedEffect(refreshKey, lockVersion) {
         val loaded = withContext(Dispatchers.Default) { loadApps(context) }
         apps = loaded
         val reconciled = LayoutStore.reconcile(entries, loaded)
@@ -236,6 +252,11 @@ fun LauncherRoot(
         openFolderId = null
         renameFolderId = null
         showCovers = false
+        // ana ekrandan çıkınca kilit pencereleri açık kalmasın (telefonu alan biri devam edemesin)
+        showLockSettings = false
+        setupReq = null
+        lockGate = false
+        lockChoicePkg = null
         drag.key = null
         focusManager.clearFocus()
     }
@@ -375,7 +396,16 @@ fun LauncherRoot(
                     .fillMaxWidth()
             ) { page ->
                 if (page == 0) {
-                    HomePage(onOpenCovers = { showCovers = true })
+                    HomePage(
+                        onOpenCovers = { showCovers = true },
+                        onOpenLock = {
+                            if (LockStore.isSet(context, LockStore.MASTER)) {
+                                lockGate = true
+                            } else {
+                                setupReq = SetupRequest(LockStore.MASTER, "Ana kilidi kur", null, true)
+                            }
+                        }
+                    )
                 } else {
                     AppsPage(
                         entries = entries,
@@ -409,6 +439,17 @@ fun LauncherRoot(
         val actions = ArrayList<Pair<String, () -> Unit>>()
         actions.add("Uygulama bilgisi" to { openAppInfo(context, pkg) })
         actions.add("Kaldır" to { uninstallApp(context, pkg) })
+        if (LockStore.isAppLocked(context, pkg)) {
+            actions.add("Kilitli (kaldırmak için: Kilit Ekranı)" to {
+                Toast.makeText(
+                    context,
+                    "Kilidi kaldırmak için kilit simgesine bas → Tüm şifreleri yönet",
+                    Toast.LENGTH_LONG
+                ).show()
+            })
+        } else {
+            actions.add("Kilit koy" to { lockChoicePkg = pkg })
+        }
         if (folderId != null) {
             actions.add("Klasörden çıkar" to { removeFromFolder(folderId, pkg) })
         }
@@ -473,17 +514,98 @@ fun LauncherRoot(
             onDismiss = { showCovers = false }
         )
     }
+
+    // ---- uygulamaya kilit koyarken: ana kilit mi, özel şifre mi?
+    val lc = lockChoicePkg
+    if (lc != null) {
+        val lcLabel = appMap[lc]?.label ?: lc
+        ActionMenu(
+            title = "$lcLabel için kilit",
+            actions = listOf<Pair<String, () -> Unit>>(
+                "Ana kilidimi kullan" to {
+                    if (LockStore.isSet(context, LockStore.MASTER)) {
+                        LockStore.lockApp(context, lc, false)
+                        lockVersion++
+                    } else {
+                        setupReq = SetupRequest(LockStore.MASTER, "Önce ana kilidi kur", lc, false)
+                    }
+                },
+                "Bu uygulamaya özel şifre koy" to {
+                    setupReq = SetupRequest("app.$lc", "$lcLabel özel kilidi", lc, false)
+                }
+            ),
+            onDismiss = { lockChoicePkg = null }
+        )
+    }
+
+    // ---- Kilit Ekranı: önce ana kilit doğrulanır
+    if (lockGate) {
+        OttomanFullDialog(onDismiss = { lockGate = false }) {
+            AuthScreen(
+                ns = LockStore.MASTER,
+                title = "Kilit Ekranı",
+                subtitle = "Devam etmek için kimliğini doğrula",
+                onSuccess = {
+                    lockGate = false
+                    showLockSettings = true
+                },
+                onCancel = { lockGate = false }
+            )
+        }
+    }
+
+    // ---- Kilit Ekranı ayarları (ana kilit, tüm şifreleri yönet, kaldırma koruması)
+    if (showLockSettings) {
+        LockSettingsScreen(
+            appLabels = appMap.mapValues { it.value.label },
+            onChangeMaster = {
+                showLockSettings = false
+                setupReq = SetupRequest(LockStore.MASTER, "Ana kilidi ayarla", null, true)
+            },
+            onChanged = { lockVersion++ },
+            onClose = { showLockSettings = false }
+        )
+    }
+
+    // ---- kilit kurulum sihirbazı
+    val req = setupReq
+    if (req != null) {
+        OttomanFullDialog(onDismiss = { setupReq = null }) {
+            CredentialSetupScreen(
+                ns = req.ns,
+                title = req.title,
+                onDone = {
+                    val target = req.pkg
+                    if (target != null) {
+                        LockStore.lockApp(context, target, req.ns != LockStore.MASTER)
+                    }
+                    if (req.openSettings) showLockSettings = true
+                    lockVersion++
+                    setupReq = null
+                },
+                onCancel = { setupReq = null }
+            )
+        }
+    }
 }
 
 // ------------------------------------------------------------------ sayfalar
 
 @Composable
-fun HomePage(onOpenCovers: () -> Unit) {
+fun HomePage(onOpenCovers: () -> Unit, onOpenLock: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+            IconButton(onClick = onOpenLock) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_lock_gold),
+                    contentDescription = "Kilit ekranı",
+                    tint = Gold,
+                    modifier = Modifier.size(28.dp)
+                )
+            }
             IconButton(onClick = onOpenCovers) {
                 Icon(
                     painter = painterResource(id = android.R.drawable.ic_menu_gallery),
@@ -773,6 +895,17 @@ fun AppTile(app: AppItem, highlight: Boolean) {
         val icon = app.icon
         if (icon != null) {
             Image(bitmap = icon, contentDescription = app.label, modifier = Modifier.size(38.dp))
+        }
+        if (app.locked) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_lock_gold),
+                contentDescription = "Kilitli",
+                tint = Gold,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(2.dp)
+                    .size(14.dp)
+            )
         }
     }
 }

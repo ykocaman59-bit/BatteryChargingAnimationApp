@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import android.graphics.Color
-import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
@@ -14,9 +13,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 
 /** Osmanlı temalı ana ekran (launcher). */
-class LauncherActivity : ComponentActivity() {
+class LauncherActivity : FragmentActivity() {
 
     // Compose tarafına "bir şey değişti" sinyali veren sayaçlar
     private val refreshKey = mutableIntStateOf(0) // uygulama listesi yenilensin
@@ -53,7 +53,15 @@ class LauncherActivity : ComponentActivity() {
         coverRef.value = prefs.getString(Prefs.COVER, null)
             ?: Covers.listAssets(this).firstOrNull()
             ?: ""
-        applyLock.value = prefs.getBoolean(Prefs.APPLY_LOCK, true)
+        // Kilit ekranı artık PIN/desen/parmak izi ayarı için. Eski "kapak kilit ekranı
+        // duvar kağıdını da değiştirsin" seçeneği bir kez kapatılır (Kapak Resmi'nden yine açılabilir).
+        if (!prefs.getBoolean("lock_wallpaper_migrated", false)) {
+            prefs.edit()
+                .putBoolean(Prefs.APPLY_LOCK, false)
+                .putBoolean("lock_wallpaper_migrated", true)
+                .apply()
+        }
+        applyLock.value = prefs.getBoolean(Prefs.APPLY_LOCK, false)
 
         // Geri tuşu: arama kutusunu temizler, menüleri kapatır, ilk sayfaya döner
         onBackPressedDispatcher.addCallback(this) {
